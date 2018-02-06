@@ -31,7 +31,7 @@ def main():
 	global debug
 	# check for debugging argument
 	if len(sys.argv) > 2:
-		if sys.argv[2] == "--debug":
+		if sys.argv[2] == "--debug" or sys.argv[2] == "--d":
 			debug = True
 			print("\n\nIn Debug Mode:\n\n")
 
