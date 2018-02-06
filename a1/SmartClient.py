@@ -15,6 +15,7 @@ import time
 
 crlf = "\r\n"
 default_version_num = "HTTP/1.1"
+debug = False
 
 # CREATESOCK 
 # open a socket, use SSL to wrap the socket and connect to the web server at port 443
@@ -46,14 +47,14 @@ def createSock(domainName, sornos):
 	return sket
 # checkHTTPs
 # create a new socket wrapped at port 443 to verify HTTPS support
-def checkHTTPs(webserver, version, sornos, debug):
+def checkHTTPs(webserver, version, sornos):
 	if debug:
 		print("\n***inside checkHTTPs***\n")
 	print("Checking for HTTPs support...(2 second delay)\n")
 	sket = createSock(webserver, True)
-	request(sket, webserver, version, debug)
+	request(sket, webserver, version)
 	
-	webserver, support, version, sornos, cookies = response(sket, webserver, sornos, True, debug)
+	webserver, support, version, sornos, cookies = response(sket, webserver, sornos, True)
 	if debug:
 		print("Domain:",webserver,"HTTPs Support:", support, version,"https:// found:", sornos, "Cookies List:\n",cookies)
 	if not support:
@@ -63,10 +64,25 @@ def checkHTTPs(webserver, version, sornos, debug):
 		print("\n***leaving checkHTTPs***\n")
 	return support, version, sornos, cookies, False
 	
+# checkHTTP2
+# attempt to verify support for HTTP/2.0 using ssl
+def checkHTTP2(webserver, version, in2):
+	
+	sket = createSock(webserver, True)
+	sket
+	sketcon = ssl.create_default_context()
+	sketcon.set_alpn_protocols('HTTP/2.0')
+	sket.do_handshake()
+	support = sket.selected_alpn_protocol()
+	if debug:
+		print(support)
+	#request2(sket, webserver, version)
+	#support = response2(sket, webserver, in2)
+	return support
 
 # REQUEST
 # send an HTTP request through the socket
-def request(sket, webserver, version, debug):
+def request(sket, webserver, version):
 
 	# generate HTTP request
 	print("Generating request...")
@@ -88,9 +104,32 @@ def request(sket, webserver, version, debug):
 	print(request)
 	print("---Request end---")
 
+# REQUEST2 for checking HTTP/2.0 support
+def request2(sket, webserver, version):
+
+	# generate HTTP request
+	print("Generating request...")
+	request_line = "HEAD / " + version + " "+ crlf
+	general_header = "Connection: Upgrade, HTTP2-Settings" + crlf 
+	request_header = "Host: " + webserver + crlf + "Upgrade: h2c" + crlf +"HTTP2-Settings: " + crlf + "User-Agent: curl/7.35.0" + crlf +crlf
+
+	
+	request = request_line + general_header + request_header
+	byte_request = request.encode()
+
+	if debug:
+		print("bytestring sent:")
+		print(byte_request)
+
+	# send HTTP request through socket
+	print("---Request begin---")
+	sket.sendall(byte_request)
+	print(request)
+	print("---Request end---")
+
 # CHECKHEAD 
 # parse through the header response received and find the HTTP version and response status code
-def checkHead(head, debug):
+def checkHead(head):
 
 	if debug:
 		print("\n***inside checkHead***\n")
@@ -110,7 +149,7 @@ def checkHead(head, debug):
 
 # FINDLINK 
 # if status code 3xx, search for the new URL given and send another request
-def findLink(response_head, debug):
+def findLink(response_head):
 	
 	if debug:
 		print("\n***inside findLink***\ndebug:")
@@ -134,7 +173,7 @@ def findLink(response_head, debug):
 	return webserver, sornos
 
 # FINDCOOKIES
-def findCookies(response_head, domain, debug):
+def findCookies(response_head, domain):
 
 	if debug:
 		print("\n***inside findCookies***\n")
@@ -144,10 +183,7 @@ def findCookies(response_head, domain, debug):
 	patt2 = re.compile("([Dd]omain=)(\S+)")
 	# create a list from all lines starting with Set-Cookie from the header response
 	cook_found = patt.findall(response_head)
-	"""
-	if debug:
-		print(cook_found)
-	"""
+	
 	cookies = []
 	#find name, keys, and domain name from the list of cookies found
 	for cook in cook_found:
@@ -180,7 +216,7 @@ def findCookies(response_head, domain, debug):
 	return cookies
 
 # RESPONSE
-def response(sket, webserver, sornos, inCheck, debug):
+def response(sket, webserver, sornos, inCheck):
 	# defaults
 	support = None
 	cookies = None
@@ -188,11 +224,7 @@ def response(sket, webserver, sornos, inCheck, debug):
 	print("HTTP request sent, awaiting response...")
 	# receive response through socket
 	byte_response = sket.recv(4096)
-	"""
-	if debug:
-		print("Byte response received:")
-		print(byte_response)
-	"""
+	
 	response = byte_response.decode("utf-8")
 	if response is '' or response is None:
 		print("No response received. Exiting...")
@@ -213,7 +245,7 @@ def response(sket, webserver, sornos, inCheck, debug):
 		response_body = "No Content\n"
 
 	# find HTTP version and response code
-	version, code = checkHead(response_head, debug)
+	version, code = checkHead(response_head)
 
 	# change answers based on status code received
 	
@@ -225,19 +257,19 @@ def response(sket, webserver, sornos, inCheck, debug):
 		#else close the current socket and check for HTTPs support with a socket connected to port 443
 		else:
 			sket.close()
-			support, version, sornos, cookies, inCheck = checkHTTPs(webserver, version, sornos, debug)
+			support, version, sornos, cookies, inCheck = checkHTTPs(webserver, version, sornos)
 			webserver = None
 			if support:
 				return webserver, support, version, sornos, cookies
 	# if code 301 then parse the response header to find the new location and check for HTTPs support
 	elif code == '301':
 		print("Status "+code+" found.")
-		webserver, sornos = findLink(response, debug)
+		webserver, sornos = findLink(response)
 		# if the new URL begins with https:// then the domain supports HTTPs
 		if sornos:
 			support = True
 		# check for HTTPs support at new location
-		support, version, sornos, cookies, inCheck = checkHTTPs(webserver, version, sornos, debug)
+		support, version, sornos, cookies, inCheck = checkHTTPs(webserver, version, sornos)
 		webserver = None
 		# if HTTPs is supported then return to main with the response from port 443
 		if support:
@@ -245,7 +277,7 @@ def response(sket, webserver, sornos, inCheck, debug):
 	# if 302, create another request to port 80 with the new URL
 	elif code == '302':
 		print("Status "+code+" found.")
-		webserver, sornos = findLink(response, debug)
+		webserver, sornos = findLink(response)
 		return webserver, support, default_version_num, sornos, cookies;
 	# if 400, a bad request was generated so return to main and print out the answers from the response
 	elif code == '400':
@@ -279,10 +311,37 @@ def response(sket, webserver, sornos, inCheck, debug):
 	print(response_body)
 
 	# find cookies received
-	cookies = findCookies(response_head, domain, debug)
+	cookies = findCookies(response_head, domain)
 	
 	return webserver, support, version, sornos, cookies
 
+# RESPONSE2 for checking HTTP/2.0 support
+def response2(sket, webserver, in2):
+	sornos = False;
+	print("HTTP request sent, awaiting response...")
+	# receive response through socket
+	byte_response = sket.recv(4096)
+	response = byte_response.decode("utf-8")
+
+	if debug:
+		print(response)
+
+	version, code = checkHead(response)
+	
+	if version == 'HTTP/2.0' or code == '101':
+		print("Code:",code,"HTTP/2.0 verified\n")
+		return True
+	elif code == '301' or code == '302':
+		webserver, sornos = findLink(response)
+	else: 
+		sornos = True
+	if not in2:
+		print("\nCode:",code,"HTTP/2.0 uncertain\n")
+		sket.close()
+		checkHTTP2(webserver, version, sornos, True)
+	else:
+		print("\nCode:",code,"HTTP/2.0 not supported\n")
+		return False
 # ANSWERS
 # output answers as per problem definition
 def answers(domainName, support, version, cookies):
@@ -299,13 +358,16 @@ def answers(domainName, support, version, cookies):
 
 # MAIN
 def main():
-
-	debug = False
+	
+	check2 = False
+	global debug
 	# check for debugging argument
 	if len(sys.argv) > 2:
-		if sys.argv[2] == "--debug":
+		if sys.argv[2] == '--debug':
 			debug = True
 			print("\n\nIn Debug Mode:\n\n")
+		elif sys.argv[2] == '--http2':
+			check2 = True
 
 	print("Program start...")
 
@@ -320,16 +382,16 @@ def main():
 	# send request to web server
 	while 1:
 		sket = createSock(webserver, sornos)
-		request(sket, webserver, version, debug)
-		webserver, support, version, sornos, cookies = response(sket, webserver, sornos, False, debug)
+		request(sket, webserver, version)
+		webserver, support, version, sornos, cookies = response(sket, webserver, sornos, False)
 		sket.close()
 		if webserver is None:
 			break
-	"""
-	version = 
-	getHTTP2:
-		send http2 request. if status is not 4xx/5xx then version is 2.0
-	"""
+	if check2:
+		print("\nMaking request to verify HTTP/2.0\n")
+		if checkHTTP2(domainName, version, False):
+			version = 'HTTP/2.0'
+
 	# output answers
 	answers(domainName, support, version, cookies)
 
@@ -337,8 +399,11 @@ if __name__ == '__main__':
 	main()
 
 """
-need to check 2.0 support
-Bugs: 
+
+Possible Bugs: 
+
+unsure if able to verify http/2.0 because of python version
+
 cbc: good
 uvic: after sending wrapped sock at 443 -> bad request
 google: good
