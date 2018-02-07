@@ -4,15 +4,21 @@ Author: Marc-Andre Descoteaux
 Project: CSC361 P2
 Student: V00847029 mdesco18@uvic.ca
 
-This python program is desgined to parse and track the TCP states from a packet capture file using pcapy.
+This python program is desgined to parse and track the TCP states from a packet capture file
+
+This program uses module pypacker created by mike01
+
+It can be downloaded and installation instructions can be found here: https://github.com/mike01/pypacker
 
 To run:
 
-invoke "python Trace.py <pcap_file>"
+invoke "python Trace.py <pcap_file> -o <outfile.txt>"
 
 Additionally:
 
-"--debug" or "--d" may be used as the 3rd argument to print out intermediary object information used for debugging.
+"--debug" or "--d" may be used as the 3rd argument instead of -o to print out intermediary object information used for debugging
+
+To print to the console, omit <outfile.txt>
 
 The program will output the following information gathered from the pcap file:
 
@@ -25,8 +31,7 @@ Source Port:
 Destination Port:
 Status:
 (Only if the connection is complete provide the following information)
-Start 
-time:
+Start time:
 End Time:
 Duration:
 Number of packets sent from Source to Destination:
