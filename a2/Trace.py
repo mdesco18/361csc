@@ -6,13 +6,13 @@
 import sys
 import os
 import time
-import pcapy as p
+#import pcapy as p
 from pypacker import ppcap
 from pypacker.layer12 import ethernet
 from pypacker.layer3 import ip
 from pypacker.layer4 import tcp
 
-
+# declaration of global variables
 debug = False
 packet_num = 0
 reset = 0
@@ -64,7 +64,7 @@ def epoch_now(conn):
 		
 	return start_time, end_time
 	
-	
+# read packets from pcap file and parse for TCP header information
 def readPacks(file):
 	global packet_num
 	global timestamp_begin
@@ -87,7 +87,7 @@ def readPacks(file):
 		if eth[tcp.TCP] is not None:
 			if debug:
 				print("%d: %s:%s -> %s:%s" % (ts, eth[ip.IP].src_s, eth[tcp.TCP].sport,	eth[ip.IP].dst_s, eth[tcp.TCP].dport))
-		#get information about packet
+		# get information about packet
 			src_port = eth[tcp.TCP].sport
 			dst_port = eth[tcp.TCP].dport
 			src_ip = eth[ip.IP].src_s
@@ -191,12 +191,11 @@ def main():
 			print("\nIn Debug Mode:\n")
 	if len(sys.argv) > 3:
 		sys.stdout = open(str(sys.argv[3]), 'w')
-
-	print("Program start...")
 	
 	fi = str(sys.argv[1])
 	
 	if debug:
+		print("Program start...")
 		print("File:",fi)
 		print("Begin reading packets...")
 	
