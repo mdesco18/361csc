@@ -10,17 +10,17 @@ This program uses module pypacker created by mike01.
 
 It can be downloaded and installation instructions can be found here: https://github.com/mike01/pypacker
 
-Easy Installation: where the pypacker repo is cloned, invoke "python setup.py install" at the command line
+	Easy Installation: where the pypacker repo is cloned, invoke "python setup.py install" at the command line
 
 To run:
 
-invoke "python Trace.py <pcap_file> -o <outfile.txt>" at the command line
+	invoke "python Trace.py <pcap_file> -o <outfile.txt>" at the command line
 
-Additionally:
+	Additionally:
 
-"--debug" or "--d" may be used as the 3rd argument instead of -o to print out intermediate object information used for debugging
+	"--debug" or "--d" may be used as the 3rd argument instead of -o to print out intermediate object information used for debugging.
 
-To print to the console, omit <outfile.txt>
+	To print to the console, omit <outfile.txt>.
 
 The program will output the following information gathered from the pcap file:
 
@@ -32,10 +32,10 @@ The program will output the following information gathered from the pcap file:
 		Part B) 
 		Part C)
 			Number of reset TCP connections: 
-			is this the number of times the RST bit was parsed or 
-			the number of distinct connections that were reset once?
-			During testing, at least one of the same connection was 
-			shown to have RST more than once. The current program outputs the number of RST bits received.
+				Is this the number of times the RST bit was parsed or 
+				the number of distinct connections that were reset once?
+				During testing, at least one of the same connection was 
+				shown to have RST more than once. The current program outputs the number of RST bits received.
 		Part D)
 
 Output Format:

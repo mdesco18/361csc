@@ -6,7 +6,6 @@
 import sys
 import os
 import time
-#import pcapy as p
 from pypacker import ppcap
 from pypacker.layer12 import ethernet
 from pypacker.layer3 import ip
@@ -28,6 +27,7 @@ durations = []
 rtt = {}
 rwin = {}
 bytes = {}
+true_start = 0
 
 # convert nanosecond to seconds on timestamps
 def nano_to_sec(nans):
@@ -75,6 +75,22 @@ def epoch_now(conn):
 		print("Converting Epoch times...\nStart:",start_time,"\nEnd:",end_time,"\nDuration:",duration)
 		
 	return start_time, end_time, duration
+def relative_time(conn, i):
+
+	global timestamp_begin
+	global timestamp_end
+	global durations
+	global true_start
+	if i == 1:
+		true_start = timestamp_begin[conn]
+	
+	start_time = timestamp_begin[conn] - true_start
+	end_time = timestamp_end[conn] - true_start
+	
+	duration = timestamp_end[conn]-timestamp_begin[conn]
+	durations.append(duration)
+	
+	return start_time, end_time, duration
 	
 def output():
 	global packet_num
@@ -107,9 +123,9 @@ def output():
 		print("Destination Port:", conn[3])
 		print("Status: S%dF%d R%d" % (state_s[conn], state_f[conn], state_r[conn]))
 		if conn in conn_complete:
-			start_time, end_time, duration = epoch_now(conn)
-			print("Start Time:", start_time, "GMT-08:00")
-			print("End_Time:", end_time, "GMT-08:00")
+			start_time, end_time, duration = relative_time(conn, i)
+			print("Start Time: %.04f seconds" % start_time)
+			print("End_Time: %.04f seconds" % end_time)
 			print("Duration: %.04f seconds" % duration)
 			print("Number of packets sent from Source to Destination:", packets_sd[conn])
 			print("Number of packets sent from Destination to Source:", packets_sd[rconn])
@@ -258,7 +274,7 @@ def readPacks(file):
 					print("rst")
 				#if state_r[conn] == 0:
 				reset += 1
-				state_r[conn] += 1
+				state_r[conn] = 1
 			
 			# if FIN+ACK bit is set: begin the closing handshake; or, continue the second part of the closing handshake; change state of connection
 			elif flags == tcp.TH_FIN+tcp.TH_ACK:
