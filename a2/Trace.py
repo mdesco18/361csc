@@ -249,7 +249,8 @@ def readPacks(file):
 				else:
 					if debug:
 						print("Waiting for syn+ack to",dst)
-				calcRTT(rconn, ts)
+				
+				calcRTT(conn, ts)
 				
 			# if ACK bit is set: check if three-way handshake needs to be completed and establish connection; if packet is acknowledging a FIN bit, mark connection as completed; if in second part of closing handshake, mark end of time; calculate RTT
 			elif flags == tcp.TH_ACK:
@@ -265,8 +266,10 @@ def readPacks(file):
 					timestamp_end[rconn] = ts
 				if conn in conn_established:
 					calcRTT(conn, ts)
+				
 				elif rconn in conn_established:
 					calcRTT(rconn, ts)
+				
 			
 			# if RST bit is set: increment total number of resets, change state of connection
 			elif flags == tcp.TH_RST + tcp.TH_ACK:
@@ -287,6 +290,7 @@ def readPacks(file):
 						conn_complete.append(conn)
 						timestamp_end[conn] = ts
 						state_f[conn] += 1
+						calcRTT(conn, ts)
 					elif rconn in conn_established and state_f[rconn] == 0:
 						conn_complete.append(rconn)
 						timestamp_end[rconn] = ts
@@ -299,6 +303,7 @@ def readPacks(file):
 			else:
 				if debug:
 					print("other flags")
+				#if conn in conn_established:
 				calcRTT(conn, ts)
 			
 			

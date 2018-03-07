@@ -1,5 +1,9 @@
 Trace.py Changelog
 
+2018-02-23
+
+- Line 268: Changed such that only ACK's received at the client side will calculate RTT instead of both ACK's on client and server side.
+
 2018-02-13
 
 - Added relative_time function so that to get start time, end time and duration in part B, relative_time is used now instead of epoch_now
