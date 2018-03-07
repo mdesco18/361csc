@@ -1,0 +1,9 @@
+traceroute to bbc.com (151.101.192.81), 30 hops max, 1500 byte packets
+ 1  n-gateway.csc.uvic.ca (142.104.74.65)  0.730 ms  0.662 ms  0.657 ms
+ 2  192.168.9.5 (192.168.9.5)  0.260 ms  0.330 ms  0.238 ms
+ 3  192.168.10.1 (192.168.10.1)  1.692 ms  1.629 ms  1.563 ms
+ 4  192.168.8.6 (192.168.8.6)  1.378 ms  1.323 ms  1.268 ms
+ 5  csc1cled050.bb.uvic.ca (142.104.252.37)  1.484 ms  1.426 ms  1.354 ms
+ 6  emc1cled050.bb.uvic.ca (142.104.252.246)  2.208 ms  2.073 ms  2.023 ms
+ 7  emc1corb115.bb.uvic.ca (142.104.250.37)  26.454 ms  50.576 ms  74.091 ms
+ 8  UVicB-Policy1.VICTX.BC.net (207.23.241.221)  98.608 ms 151.101.192.81 (151.101.192.81)  1.935 ms UVicB-Policy1.VICTX.BC.net (207.23.241.221)  26.793 ms

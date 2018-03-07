@@ -1,0 +1,8 @@
+Lab 8 Quiz CSC361
+Marc-Andre Descoteaux V00847029
+
+1. host-a tries to get the MAC address of which IP? 
+192.168.1.1 at host-b
+
+2. What is the MAC address it gets from ARP reply?
+52:54:00:af:f8:60

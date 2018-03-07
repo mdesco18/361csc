@@ -1,0 +1,9 @@
+traceroute to mit.edu (23.44.161.210), 30 hops max, 2000 byte packets
+ 1  n-gateway.csc.uvic.ca (142.104.74.65)  1.529 ms  1.531 ms  1.631 ms
+ 2  192.168.9.5 (192.168.9.5)  0.288 ms  0.276 ms  0.284 ms
+ 3  192.168.10.1 (192.168.10.1)  1.800 ms  1.780 ms  1.932 ms
+ 4  192.168.8.6 (192.168.8.6)  1.321 ms  1.490 ms  1.470 ms
+ 5  csc1cled050.bb.uvic.ca (142.104.252.37)  0.758 ms  0.754 ms  0.739 ms
+ 6  emc1cled050.bb.uvic.ca (142.104.252.246)  2.833 ms  2.774 ms  2.985 ms
+ 7  emc1corb115.bb.uvic.ca (142.104.250.37)  33.963 ms  99.412 ms *
+ 8  UVicB-Policy1.VICTX.BC.net (207.23.241.221)  66.947 ms a23-44-161-210.deploy.static.akamaitechnologies.com (23.44.161.210)  1.953 ms  1.927 ms
