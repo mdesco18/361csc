@@ -4,7 +4,7 @@ Author: Marc-Andre Descoteaux
 Project: CSC361 P2
 Student: V00847029 mdesco18@uvic.ca
 
-This python program is designed to parse and track the TCP states from a packet capture file
+This python program is designed to parse and track the TCP states from a packet capture file.
 
 This program uses module pypacker created by mike01.
 
@@ -25,7 +25,7 @@ To run:
 The program will output the following information gathered from the pcap file:
 
 	Note: All numerical values will be output with 4 decimal points. 
-	To change this, in method 'output()', replace '%0.4" % ' with ':",' from the print statements in part D 
+		To change this, in method 'output()', replace '%0.4" % ' with ':",' from the print statements in part D 
 	
 	Marking concerns: 
 		Part A) 

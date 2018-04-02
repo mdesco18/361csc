@@ -260,9 +260,14 @@ def readPacks(file):
 						print("Connection Established")
 					del twh[seq_num]
 					conn_established.append(conn)
-				if (rconn in state_f and state_f[rconn] > 0) or (conn in state_f and state_f[conn] > 0):
-					timestamp_end[rconn] = ts
-					timestamp_end[conn] = ts
+				if rconn in state_f:
+					if state_f[rconn] > 0:
+						timestamp_end[rconn] = ts
+				elif conn in state_f:
+					if state_f[conn] > 0:
+						timestamp_end[conn] = ts
+					#timestamp_end[conn] = ts
+					#timestamp_end[rconn] = ts
 				if conn in conn_established:
 					calcRTT(conn, ts)
 				elif rconn in conn_established:

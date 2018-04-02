@@ -1,9 +1,20 @@
 Trace.py Changelog
 
-2018-02-23
+2018-03-27
 
-- Line 268: Changed such that only ACK's received at the client side will calculate RTT instead of both ACK's on client and server side.
-
+- Line 263: 
+		 if state_f[rconn] > 0 or state_f[conn] > 0:
+			timestamp_end[conn] = ts
+			timestamp_end[rconn] = ts
+		 
+		 changed to 
+		 
+		if (rconn in state_f and state_f[rconn] > 0) or (conn in state_f and state_f[conn] > 0):
+			timestamp_end[rconn] = ts
+			timestamp_end[conn] = ts
+		
+		KeyError from demo occurred because ACK segment was the first packet captured and state_f[rconn] was not yet initialized.
+		
 2018-02-13
 
 - Added relative_time function so that to get start time, end time and duration in part B, relative_time is used now instead of epoch_now

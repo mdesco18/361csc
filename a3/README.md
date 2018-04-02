@@ -19,9 +19,6 @@ To run:
 	IMPORTANT NOTE: 
 		This program will only work with .pcap files and not .pcapng files.
 		This is a limitation of the (minor) implementation of pcapng (in pcapng.py) of the pypacker module.
-		For the TA's convenience, I have attached a zipped folder of the 5 sample trace.pcapng captures converted to .pcap.
-		For any other .pcapng files used in testing, please load the .pcapng into Wireshark and export as a .pcap.
-	
 
 	Additionally:
 
